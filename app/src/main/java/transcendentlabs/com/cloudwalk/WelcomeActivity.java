@@ -55,6 +55,7 @@ public class WelcomeActivity extends Activity implements SensorEventListener {
             stepBalance = savedBalance.intValue();
         }
 
+
         // Convert currentUser into String
         String struser = currentUser.getUsername().toString();
 

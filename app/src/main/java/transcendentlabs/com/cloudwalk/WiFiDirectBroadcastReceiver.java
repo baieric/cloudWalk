@@ -3,13 +3,17 @@ package transcendentlabs.com.cloudwalk;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
+
+import com.parse.ParseUser;
 
 /**
  * A BroadcastReceiver that notifies of important Wi-Fi p2p events.
  */
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
+    private final String DEVICE_NAME = "deviceName";
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
@@ -33,6 +37,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+        String currentDeviceName = device.deviceName;
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.put(DEVICE_NAME, currentDeviceName);
+        currentUser.saveInBackground();
+
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             // Check to see if Wi-Fi is enabled and notify appropriate activity
