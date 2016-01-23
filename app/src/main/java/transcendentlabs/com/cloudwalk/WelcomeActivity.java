@@ -73,6 +73,8 @@ public class WelcomeActivity extends Activity implements SensorEventListener {
             public void onClick(View arg0) {
                 // Logout current user
                 ParseUser.logOut();
+                Intent intent = new Intent(WelcomeActivity.this, LoginSignupActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
