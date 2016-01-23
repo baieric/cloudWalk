@@ -26,5 +26,12 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/LogoutBtn" />
+    <Button
+        android:id="@+id/joinNetwork"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/logout"
+        android:layout_centerHorizontal="true"
+        android:text="@string/JoinNetwork" />
 
 </RelativeLayout>

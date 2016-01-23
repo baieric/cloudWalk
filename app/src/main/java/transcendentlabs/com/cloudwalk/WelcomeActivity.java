@@ -12,6 +12,7 @@ public class WelcomeActivity extends Activity {
 
     // Declare Variable
     Button logout;
+    Button joinNetwork;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,5 +44,20 @@ public class WelcomeActivity extends Activity {
                 finish();
             }
         });
+
+        joinNetwork = (Button) findViewById(R.id.joinNetwork);
+
+        joinNetwork.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(
+                        WelcomeActivity.this,
+                        NetworkActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
+
+
 }
