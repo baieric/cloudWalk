@@ -4,6 +4,7 @@ import com.parse.ParseUser;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -21,6 +22,8 @@ public class WelcomeActivity extends Activity implements SensorEventListener {
     private final String STEP_BALANCE = "stepBalance";
     // Declare Variable
     Button logout;
+    Button joinNetwork;
+
     private SensorManager sensorManager;
     private TextView count;
     private TextView balance;
@@ -74,6 +77,18 @@ public class WelcomeActivity extends Activity implements SensorEventListener {
             }
         });
 
+        joinNetwork = (Button) findViewById(R.id.joinNetwork);
+
+        joinNetwork.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(
+                        WelcomeActivity.this,
+                        NetworkActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         count = (TextView) findViewById(R.id.step_count);
         balance = (TextView) findViewById(R.id.step_balance);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -122,4 +137,5 @@ public class WelcomeActivity extends Activity implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
+
 }
