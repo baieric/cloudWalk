@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.parse.Parse;
+import com.parse.ParseACL;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseUser;
 
@@ -14,7 +16,27 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Determine whether the current user is an anonymous user
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
+// Add your initialization code here
+
+        Parse.initialize(this, BuildConfig.PARSE_APPLICATION_ID, BuildConfig.PARSE_CLIENT_KEY);
+
+        ParseUser.enableAutomaticUser();
+
+        ParseACL defaultACL = new ParseACL();
+
+// If you would like all objects to be private by default, remove this
+
+// line.
+
+        defaultACL.setPublicReadAccess(true);
+
+        ParseACL.setDefaultACL(defaultACL, true);
+
+// Determine whether the current user is an anonymous user
         if (ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
             // If user is anonymous, send the user to LoginSignupActivity.class
             Intent intent = new Intent(MainActivity.this,
