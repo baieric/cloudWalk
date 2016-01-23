@@ -10,6 +10,7 @@
     <string name="LoginBtn">Login</string>
     <string name="SignupBtn">Sign Up</string>
     <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="network_activity_welcome">NetworkActivity</string>
     <string name="Welcome">Welcome</string>
     <string name="LogoutBtn">Log out</string>
     <string name="JoinNetwork">Join Network</string>
