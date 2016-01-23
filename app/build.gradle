@@ -1,0 +1,34 @@
+apply plugin: 'com.android.application'
+
+def PARSE_APPLICATION_ID = '"' + ParseApplicationIdProp + '"' ?: '"Define Parse app id"';
+def PARSE_CLIENT_KEY = '"' + ParseClientKeyProp + '"' ?: '"Define client key"';
+android {
+    compileSdkVersion 23
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "transcendentlabs.com.cloudwalk"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        debug{
+            buildConfigField 'String', 'PARSE_APPLICATION_ID', PARSE_APPLICATION_ID
+            buildConfigField 'String', 'PARSE_CLIENT_KEY', PARSE_CLIENT_KEY
+        }
+        release {
+            buildConfigField 'String', 'PARSE_APPLICATION_ID', PARSE_APPLICATION_ID
+            buildConfigField 'String', 'PARSE_CLIENT_KEY', PARSE_CLIENT_KEY
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile files('libs/Parse-1.12.0.jar')
+}
