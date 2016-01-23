@@ -25,7 +25,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         myPeerListListener = new WifiP2pManager.PeerListListener() {
             @Override
             public void onPeersAvailable(WifiP2pDeviceList peers) {
-
+                mActivity.peersFound(peers);
             }
         };
     }
