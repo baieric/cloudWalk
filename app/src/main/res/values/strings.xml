@@ -18,6 +18,7 @@
     <string name="FoundPeers">Peers Found</string>
     <string name="total_steps_taken">total steps taken</string>
     <string name="peer_name">Peer Name</string>
+    <string name="step_credits">$teps</string>
 
 
 </resources>
