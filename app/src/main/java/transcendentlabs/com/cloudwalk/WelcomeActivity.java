@@ -66,6 +66,8 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
         // Convert currentUser into String
         String struser = currentUser.getUsername();
 
+        Constants.setUsername(struser);
+
         // Locate TextView in welcome.xml
         TextView txtuser = (TextView) findViewById(R.id.txtuser);
 

@@ -1,5 +1,6 @@
 package transcendentlabs.com.cloudwalk;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager.Channel mChannel;
     private NetworkActivity mActivity;
     WifiP2pManager.PeerListListener myPeerListListener;
+    private Dialog mDialog;
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel,
                                        NetworkActivity activity) {
@@ -26,6 +28,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.mManager = manager;
         this.mChannel = channel;
         this.mActivity = activity;
+        mDialog = new Dialog(mActivity);
+        mDialog.setTitle("Please connect to wifi");
         myPeerListListener = new WifiP2pManager.PeerListListener() {
             @Override
             public void onPeersAvailable(WifiP2pDeviceList peers) {
@@ -37,20 +41,21 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+
         /* WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
         String currentDeviceName = device.deviceName;
         ParseUser currentUser = ParseUser.getCurrentUser();
         currentUser.put(DEVICE_NAME, currentDeviceName);
         currentUser.saveInBackground();*/
-
+        
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             // Check to see if Wi-Fi is enabled and notify appropriate activity
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                // Wifi P2P is enabled
+                //if(mDialog.isShowing()) mDialog.dismiss();
             } else {
-                // Wi-Fi P2P is not enabled
+               // mDialog.show();
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // Call WifiP2pManager.requestPeers() to get a list of current peers
