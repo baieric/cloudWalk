@@ -38,6 +38,7 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
 
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
+    private WifiP2pDnsSdServiceRequest serviceRequest;
 
     private SensorManager sensorManager;
     private TextView count;
@@ -101,6 +102,11 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
                 finish();
             }
         });
+
+        while (!Settings.System.canWrite(WelcomeActivity.this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+            startActivity(intent);
+        }
 
         joinNetwork = (Button) findViewById(R.id.joinNetwork);
 
@@ -171,27 +177,6 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
 
     private void startRegistration() {
 
-        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        try {
-            Class cmClass = Class.forName(cm.getClass().getName());
-            Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
-            method.setAccessible(true); // Make the method callable
-            // get the setting for "mobile data"
-            if((Boolean)method.invoke(cm)) {
-
-                if (!Settings.System.canWrite(this)) {
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                    startActivity(intent);
-                }
-                Hotspot.configApState(this);
-            }
-
-        } catch (Exception e) {
-            // Some problem accessible private API
-            // TODO do whatever error handling you want here
-        }
-
-
         //  Create a string map containing information about your service.
         Map<String, String> record = new HashMap<String, String>();
         record.put("username", Constants.getUserName());
@@ -215,6 +200,70 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
 
             @Override
             public void onFailure(int arg0) {
+                // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
+            }
+        });
+
+        discoverService();
+    }
+
+    private void discoverService() {
+        WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
+
+            @Override
+            public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
+            }
+        };
+
+        WifiP2pManager.DnsSdServiceResponseListener servListener = new WifiP2pManager.DnsSdServiceResponseListener() {
+            @Override
+            public void onDnsSdServiceAvailable(String instanceName, String registrationType,
+                                                WifiP2pDevice resourceType) {
+
+                ConnectivityManager cm = (ConnectivityManager) WelcomeActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+                try {
+                    Class cmClass = Class.forName(cm.getClass().getName());
+                    Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
+                    method.setAccessible(true); // Make the method callable
+                    // get the setting for "mobile data"
+                    if((Boolean)method.invoke(cm) && !Hotspot.isApOn(WelcomeActivity.this)) {
+                        Hotspot.configApState(WelcomeActivity.this);
+                    }
+
+                } catch (Exception e) {
+                    // Some problem accessible private API
+                    // TODO do whatever error handling you want here
+                }
+            }
+        };
+
+        mManager.setDnsSdResponseListeners(mChannel, servListener, txtListener);
+
+        serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+
+        mManager.addServiceRequest(mChannel,
+                serviceRequest,
+                new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        // Success!
+                    }
+
+                    @Override
+                    public void onFailure(int code) {
+                        // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
+                    }
+                });
+
+        mManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                // Success!
+            }
+
+            @Override
+            public void onFailure(int code) {
                 // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
             }
         });
