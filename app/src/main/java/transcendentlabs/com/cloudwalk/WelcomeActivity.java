@@ -23,7 +23,7 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
     private final String TOTAL_STEPS = "totalSteps";
     private final String STEP_BALANCE = "stepBalance";
     // Declare Variable
-    Button logout;
+    TextView logout;
     Button joinNetwork;
 
     private SensorManager sensorManager;
@@ -73,7 +73,7 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
         txtuser.setText("Welcome, " + struser + "!");
 
         // Locate Button in welcome.xml
-        logout = (Button) findViewById(R.id.logout);
+        logout = (TextView) findViewById(R.id.logout);
 
         // Logout Button Click Listener
         logout.setOnClickListener(new OnClickListener() {
