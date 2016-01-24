@@ -6,6 +6,9 @@ import java.lang.reflect.*;
 
 public class Hotspot {
 
+    public static String SSID = Constants.getUserName();
+    public static String preSharedKey = "testpassword";
+
     //check whether wifi hotspot on or off
     public static boolean isApOn(Context context) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
@@ -32,8 +35,8 @@ public class Hotspot {
             Method getConfigMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
             WifiConfiguration wifiConfig = (WifiConfiguration) getConfigMethod.invoke(wifiManager);
 
-            wifiConfig.SSID = "test1";
-            wifiConfig.preSharedKey = "testtest3";
+            wifiConfig.SSID = SSID;
+            wifiConfig.preSharedKey = preSharedKey;
 
             Method setConfigMethod = wifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
             setConfigMethod.invoke(wifiManager, wifiConfig);
