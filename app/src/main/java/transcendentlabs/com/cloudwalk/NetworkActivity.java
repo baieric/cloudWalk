@@ -1,10 +1,7 @@
 package transcendentlabs.com.cloudwalk;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.Network;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -15,15 +12,15 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.parse.ParseUser;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,10 +29,11 @@ public class NetworkActivity extends AppCompatActivity{
 
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
-    BroadcastReceiver mReceiver;
-    IntentFilter mIntentFilter;
-    ArrayAdapter mAdapter;
+    PeerArrayAdapter mAdapter;
     private WifiP2pDnsSdServiceRequest serviceRequest;
+    private ListView mPeerList;
+    private ArrayList<Peer> peers = new ArrayList<>();
+    final HashMap<String, Peer> allConnections = new HashMap<String, Peer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,26 +77,26 @@ public class NetworkActivity extends AppCompatActivity{
 
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
-//        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
 
-//        mIntentFilter = new IntentFilter();
-//        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-//        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-//        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-//        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
-        mAdapter = new ArrayAdapter<String>(this, R.layout.activity_network);
-        ListView peerList = (ListView) findViewById(R.id.peerList);
-        peerList.setAdapter(mAdapter);
+        mAdapter = new PeerArrayAdapter(this, R.layout.peer_list_item, peers);
+        mPeerList = (ListView) findViewById(R.id.peerList);
+        mPeerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Peer peer = (Peer) mPeerList.getItemAtPosition(i);
+                Log.e("ERIC", peer.name);
+            }
+        });
+        mPeerList.setAdapter(mAdapter);
 
         startRegistration();
     }
 
     private void startRegistration() {
         //  Create a string map containing information about your service.
-        Map record = new HashMap();
+        Map<String, String> record = new HashMap<String, String>();
         record.put("username", Constants.getUserName());
-        record.put("available", "visible");
+        record.put("needsConnection", "true");
 
         // Service information.  Pass it an instance name, service type
         // _protocol._transportlayer , and the map containing
@@ -125,15 +123,14 @@ public class NetworkActivity extends AppCompatActivity{
         discoverService();
     }
 
-    final HashMap<String, String> buddies = new HashMap<String, String>();
-
     private void discoverService() {
         WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
 
             @Override
             public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
-
-                buddies.put(srcDevice.deviceAddress, txtRecordMap.get("username"));
+                boolean needsConnection = true; // TODO set this properly later
+                Peer peer = new Peer(srcDevice.deviceAddress, txtRecordMap.get("username"), needsConnection);
+                allConnections.put(srcDevice.deviceAddress, peer);
             }
         };
 
@@ -145,10 +142,13 @@ public class NetworkActivity extends AppCompatActivity{
                 // Update the device name with the human-friendly version from
                 // the DnsTxtRecord, assuming one arrived.
                 if(instanceName.equals("CloudWalk")){
-                    TextView peer = (TextView) findViewById(R.id.peer);
-                    String name = buddies.containsKey(resourceType.deviceAddress) ?
-                            buddies.get(resourceType.deviceAddress) : resourceType.deviceAddress;
-                    peer.setText(name);
+                    if(allConnections.containsKey(resourceType.deviceAddress)) {
+                        Peer p = allConnections.get(resourceType.deviceAddress);
+                        peers.add(p);
+                    } else{
+                        // TODO handle this error case?
+                    }
+                    mAdapter.notifyDataSetChanged();
                 }
             }
         };
@@ -207,34 +207,4 @@ public class NetworkActivity extends AppCompatActivity{
             });
         }
     }
-
-    /* register the broadcast receiver with the intent values to be matched */
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        registerReceiver(mReceiver, mIntentFilter);
-//        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-//            @Override
-//            public void onSuccess() {}
-//
-//            @Override
-//            public void onFailure(int reasonCode) {}
-//        });
-    }
-    /* unregister the broadcast receiver */
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        unregisterReceiver(mReceiver);
-//        mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
-//            @Override
-//            public void onSuccess() {
-//            }
-//
-//            @Override
-//            public void onFailure(int reason) {
-//            }
-//        });
-    }
-
 }
