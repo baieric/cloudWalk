@@ -10,11 +10,16 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +28,11 @@ public class NetworkActivity extends AppCompatActivity{
 
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
-    ArrayAdapter mAdapter;
+    PeerArrayAdapter mAdapter;
     private WifiP2pDnsSdServiceRequest serviceRequest;
+    private ListView mPeerList;
+    private ArrayList<Peer> peers = new ArrayList<>();
+    final HashMap<String, Peer> allConnections = new HashMap<String, Peer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +47,25 @@ public class NetworkActivity extends AppCompatActivity{
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
 
-        mAdapter = new ArrayAdapter<String>(this, R.layout.activity_network);
-        ListView peerList = (ListView) findViewById(R.id.peerList);
-        peerList.setAdapter(mAdapter);
+        mAdapter = new PeerArrayAdapter(this, R.layout.peer_list_item, peers);
+        mPeerList = (ListView) findViewById(R.id.peerList);
+        mPeerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Peer peer = (Peer) mPeerList.getItemAtPosition(i);
+                Log.e("ERIC", peer.name);
+            }
+        });
+        mPeerList.setAdapter(mAdapter);
 
         startRegistration();
     }
 
     private void startRegistration() {
         //  Create a string map containing information about your service.
-        Map record = new HashMap();
+        Map<String, String> record = new HashMap<String, String>();
         record.put("username", Constants.getUserName());
-        record.put("available", "visible");
+        record.put("needsConnection", "true");
 
         // Service information.  Pass it an instance name, service type
         // _protocol._transportlayer , and the map containing
@@ -77,15 +92,14 @@ public class NetworkActivity extends AppCompatActivity{
         discoverService();
     }
 
-    final HashMap<String, String> buddies = new HashMap<String, String>();
-
     private void discoverService() {
         WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
 
             @Override
             public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
-
-                buddies.put(srcDevice.deviceAddress, txtRecordMap.get("username"));
+                boolean needsConnection = true; // TODO set this properly later
+                Peer peer = new Peer(srcDevice.deviceAddress, txtRecordMap.get("username"), needsConnection);
+                allConnections.put(srcDevice.deviceAddress, peer);
             }
         };
 
@@ -97,10 +111,13 @@ public class NetworkActivity extends AppCompatActivity{
                 // Update the device name with the human-friendly version from
                 // the DnsTxtRecord, assuming one arrived.
                 if(instanceName.equals("CloudWalk")){
-                    TextView peer = (TextView) findViewById(R.id.peer);
-                    String name = buddies.containsKey(resourceType.deviceAddress) ?
-                            buddies.get(resourceType.deviceAddress) : resourceType.deviceAddress;
-                    peer.setText(name);
+                    if(allConnections.containsKey(resourceType.deviceAddress)) {
+                        Peer p = allConnections.get(resourceType.deviceAddress);
+                        peers.add(p);
+                    } else{
+                        // TODO handle this error case?
+                    }
+                    mAdapter.notifyDataSetChanged();
                 }
             }
         };
