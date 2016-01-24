@@ -59,6 +59,8 @@ public class WelcomeActivity extends Activity implements SensorEventListener {
         // Convert currentUser into String
         String struser = currentUser.getUsername().toString();
 
+        Constants.setUsername(struser);
+
         // Locate TextView in welcome.xml
         TextView txtuser = (TextView) findViewById(R.id.txtuser);
 
