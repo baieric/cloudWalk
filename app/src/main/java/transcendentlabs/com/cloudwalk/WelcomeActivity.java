@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import com.parse.ParseUser;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -169,11 +171,26 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
 
     private void startRegistration() {
 
-        if (!Settings.System.canWrite(this)) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-            startActivity(intent);
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        try {
+            Class cmClass = Class.forName(cm.getClass().getName());
+            Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
+            method.setAccessible(true); // Make the method callable
+            // get the setting for "mobile data"
+            if((Boolean)method.invoke(cm)) {
+
+                if (!Settings.System.canWrite(this)) {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                    startActivity(intent);
+                }
+                Hotspot.configApState(this);
+            }
+
+        } catch (Exception e) {
+            // Some problem accessible private API
+            // TODO do whatever error handling you want here
         }
-        Hotspot.configApState(this);
+
 
         //  Create a string map containing information about your service.
         Map<String, String> record = new HashMap<String, String>();
