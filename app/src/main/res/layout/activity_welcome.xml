@@ -89,6 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="@string/JoinNetwork"
+            android:drawableLeft="@drawable/ic_wifi_tethering_white_24dp"
             android:background="@drawable/network_button"
             android:textColor="@android:color/white"/>
 
