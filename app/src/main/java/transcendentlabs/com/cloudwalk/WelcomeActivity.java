@@ -6,7 +6,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pManager;
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -18,6 +23,9 @@ import android.widget.Toast;
 
 import com.parse.ParseUser;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class WelcomeActivity extends AppCompatActivity implements SensorEventListener {
 
     private final String TOTAL_STEPS = "totalSteps";
@@ -25,6 +33,9 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
     // Declare Variable
     TextView logout;
     Button joinNetwork;
+
+    WifiP2pManager mManager;
+    WifiP2pManager.Channel mChannel;
 
     private SensorManager sensorManager;
     private TextView count;
@@ -104,6 +115,11 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
         count = (TextView) findViewById(R.id.step_count);
         balance = (TextView) findViewById(R.id.step_balance);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        mChannel = mManager.initialize(this, getMainLooper(), null);
+
+        startRegistration();
     }
 
     @Override
@@ -148,6 +164,43 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
+    }
+
+
+    private void startRegistration() {
+
+        if (!Settings.System.canWrite(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+            startActivity(intent);
+        }
+        Hotspot.configApState(this);
+
+        //  Create a string map containing information about your service.
+        Map<String, String> record = new HashMap<String, String>();
+        record.put("username", Constants.getUserName());
+        record.put("needsConnection", "false");
+
+        // Service information.  Pass it an instance name, service type
+        // _protocol._transportlayer , and the map containing
+        // information other devices will want once they connect to this one.
+        WifiP2pDnsSdServiceInfo serviceInfo =
+                WifiP2pDnsSdServiceInfo.newInstance("CloudWalk", "_presence._tcp", record);
+
+        // Add the local service, sending the service info, network channel,
+        // and listener that will be used to indicate success or failure of
+        // the request.
+        mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                // Command successful! Code isn't necessarily needed here,
+                // Unless you want to update the UI or add logging statements.
+            }
+
+            @Override
+            public void onFailure(int arg0) {
+                // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
+            }
+        });
     }
 
 }

@@ -2,9 +2,7 @@ package transcendentlabs.com.cloudwalk;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
@@ -18,10 +16,8 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,21 +40,6 @@ public class NetworkActivity extends AppCompatActivity{
         ActionBar bar = getSupportActionBar();
         Window window = getWindow();
         Util.setActionBarColour(bar, window, this);
-
-        Button hotspot = (Button) findViewById(R.id.hotspot);
-
-        hotspot.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View arg0) {
-                // Logout current user
-                if (!Settings.System.canWrite(NetworkActivity.this)) {
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                    startActivity(intent);
-                }
-                Hotspot.configApState(NetworkActivity.this);
-
-            }
-        });
 
         Button connect = (Button) findViewById(R.id.connect);
 
@@ -128,8 +109,7 @@ public class NetworkActivity extends AppCompatActivity{
 
             @Override
             public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
-                boolean needsConnection = true; // TODO set this properly later
-                Peer peer = new Peer(srcDevice.deviceAddress, txtRecordMap.get("username"), needsConnection);
+                Peer peer = new Peer(srcDevice.deviceAddress, txtRecordMap.get("username"), txtRecordMap.get("needsConnection").equals("true"));
                 allConnections.put(srcDevice.deviceAddress, peer);
             }
         };
@@ -144,6 +124,7 @@ public class NetworkActivity extends AppCompatActivity{
                 if(instanceName.equals("CloudWalk")){
                     if(allConnections.containsKey(resourceType.deviceAddress)) {
                         Peer p = allConnections.get(resourceType.deviceAddress);
+                        if(p.needsConnection)
                         peers.add(p);
                     } else{
                         // TODO handle this error case?
@@ -183,28 +164,5 @@ public class NetworkActivity extends AppCompatActivity{
                 // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
             }
         });
-    }
-
-
-    public void peersFound(WifiP2pDeviceList peerList){
-        final TextView peersFound = (TextView) findViewById(R.id.findPeers);
-        Collection<WifiP2pDevice> peers = peerList.getDeviceList();
-        if(peers.size() > 0){
-            final WifiP2pDevice device = peers.iterator().next();
-            WifiP2pConfig config = new WifiP2pConfig();
-            config.deviceAddress = device.deviceAddress;
-            mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-
-                @Override
-                public void onSuccess() {
-                    peersFound.setText("Connected to" + device.deviceName);
-                }
-
-                @Override
-                public void onFailure(int reason) {
-                    peersFound.setText("Failure to connect to peer");
-                }
-            });
-        }
     }
 }
