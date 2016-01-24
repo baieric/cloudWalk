@@ -62,6 +62,21 @@ public class NetworkActivity extends AppCompatActivity{
             }
         });
 
+        Button connect = (Button) findViewById(R.id.connect);
+
+        connect.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View arg0) {
+                // Logout current user
+                if (!Settings.System.canWrite(NetworkActivity.this)) {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                    startActivity(intent);
+                }
+                Hotspot.connect(NetworkActivity.this);
+
+            }
+        });
+
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
 //        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);

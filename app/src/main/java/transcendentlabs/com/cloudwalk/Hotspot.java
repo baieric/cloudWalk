@@ -3,6 +3,7 @@ package transcendentlabs.com.cloudwalk;
 import android.content.*;
 import android.net.wifi.*;
 import java.lang.reflect.*;
+import java.util.List;
 
 public class Hotspot {
 
@@ -50,5 +51,30 @@ public class Hotspot {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static boolean connect(Context context) {
+        String networkSSID = "test";
+        String networkPass = "testpassword";
+
+        WifiConfiguration conf = new WifiConfiguration();
+        conf.SSID = "\"" + networkSSID + "\"";   // Please note the quotes. String should contain ssid in quotes
+        conf.preSharedKey = "\""+ networkPass +"\"";
+
+        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        wifiManager.addNetwork(conf);
+
+        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+        for( WifiConfiguration i : list ) {
+            if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(i.networkId, true);
+                wifiManager.reconnect();
+
+                break;
+            }
+        }
+
+        return true;
     }
 }

@@ -28,6 +28,13 @@
         android:layout_height="wrap_content"
         android:text="open hotspot" />
 
+    <Button
+        android:id="@+id/connect"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hotspot"
+        android:text="connect" />
+
 
     <ListView
         android:id="@+id/peerList"
