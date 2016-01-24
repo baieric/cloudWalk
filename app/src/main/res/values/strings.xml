@@ -13,7 +13,7 @@
     <string name="network_activity_welcome">NetworkActivity</string>
     <string name="Welcome">Welcome</string>
     <string name="LogoutBtn">Log out</string>
-    <string name="JoinNetwork">Join Network</string>
+    <string name="JoinNetwork">Find Hotspot</string>
     <string name="FindPeers">Looking for peers</string>
     <string name="FoundPeers">Peers Found</string>
     <string name="total_steps_taken">total steps taken</string>
