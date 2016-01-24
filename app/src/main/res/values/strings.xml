@@ -16,6 +16,7 @@
     <string name="JoinNetwork">Join Network</string>
     <string name="FindPeers">Looking for peers</string>
     <string name="FoundPeers">Peers Found</string>
+    <string name="total_steps_taken">total steps taken</string>
 
 
 </resources>

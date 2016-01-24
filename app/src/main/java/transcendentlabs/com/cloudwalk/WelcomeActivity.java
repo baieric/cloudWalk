@@ -1,8 +1,5 @@
 package transcendentlabs.com.cloudwalk;
 
-import com.parse.ParseUser;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -10,13 +7,18 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class WelcomeActivity extends Activity implements SensorEventListener {
+import com.parse.ParseUser;
+
+public class WelcomeActivity extends AppCompatActivity implements SensorEventListener {
 
     private final String TOTAL_STEPS = "totalSteps";
     private final String STEP_BALANCE = "stepBalance";
@@ -41,6 +43,11 @@ public class WelcomeActivity extends Activity implements SensorEventListener {
         // Get the view from singleitemview.xml
         setContentView(R.layout.activity_welcome);
         // Retrieve current user from Parse.com
+
+        ActionBar bar = getSupportActionBar();
+        Window window = getWindow();
+        Util.setActionBarColour(bar, window, this);
+
         currentUser = ParseUser.getCurrentUser();
         Number savedSteps = currentUser.getNumber(TOTAL_STEPS);
         Number savedBalance = currentUser.getNumber(STEP_BALANCE);
@@ -57,13 +64,13 @@ public class WelcomeActivity extends Activity implements SensorEventListener {
 
 
         // Convert currentUser into String
-        String struser = currentUser.getUsername().toString();
+        String struser = currentUser.getUsername();
 
         // Locate TextView in welcome.xml
         TextView txtuser = (TextView) findViewById(R.id.txtuser);
 
         // Set the currentUser String into TextView
-        txtuser.setText("You are logged in as " + struser);
+        txtuser.setText("Welcome, " + struser + "!");
 
         // Locate Button in welcome.xml
         logout = (Button) findViewById(R.id.logout);
@@ -128,8 +135,8 @@ public class WelcomeActivity extends Activity implements SensorEventListener {
             totalSteps += sensorEvent.values[0] - firstSensorValue;
             stepBalance += sensorEvent.values[0] - firstSensorValue;
             firstSensorValue = (int) sensorEvent.values[0];
-            count.setText(String.valueOf(totalSteps) + " total steps recorded");
-            balance.setText(String.valueOf(stepBalance) + " Step Credits");
+            count.setText(String.valueOf(totalSteps));
+            balance.setText(String.valueOf(stepBalance));
             currentUser.put(TOTAL_STEPS, totalSteps);
             currentUser.put(STEP_BALANCE, stepBalance);
             currentUser.saveInBackground();

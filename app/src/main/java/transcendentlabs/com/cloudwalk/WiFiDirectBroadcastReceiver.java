@@ -37,11 +37,11 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+        /* WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
         String currentDeviceName = device.deviceName;
         ParseUser currentUser = ParseUser.getCurrentUser();
         currentUser.put(DEVICE_NAME, currentDeviceName);
-        currentUser.saveInBackground();
+        currentUser.saveInBackground();*/
 
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {

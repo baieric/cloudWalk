@@ -8,11 +8,10 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.Window;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.Collection;
 
@@ -28,6 +27,10 @@ public class NetworkActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_network);
+
+        ActionBar bar = getSupportActionBar();
+        Window window = getWindow();
+        Util.setActionBarColour(bar, window, this);
 
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
