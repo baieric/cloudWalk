@@ -103,7 +103,7 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
             }
         });
 
-        while (!Settings.System.canWrite(WelcomeActivity.this)) {
+        if (!Settings.System.canWrite(WelcomeActivity.this)) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
             startActivity(intent);
         }
