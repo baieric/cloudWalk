@@ -75,7 +75,7 @@
                     android:id="@+id/step_credits"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Step Credits"
+                    android:text="@string/step_credits"
                     android:textColor="@android:color/white" />
 
             </LinearLayout>
