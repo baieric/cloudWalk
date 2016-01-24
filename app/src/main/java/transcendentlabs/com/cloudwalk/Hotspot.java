@@ -27,13 +27,13 @@ public class Hotspot {
     }
 
     // toggle wifi hotspot on or off
-    public static boolean configApState(Context context, boolean on) {
+    public static boolean configApState(Context context) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiConfiguration wificonfiguration = null;
 
         try {
             // if WiFi is on, turn it off
-            if (isApOn(context) && !on) {
+            if (isApOn(context)) {
                 wifimanager.setWifiEnabled(false);
             }
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
@@ -94,7 +94,7 @@ public class Hotspot {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                configApState(context, false);
+                configApState(context);
             }
 
         }, time);

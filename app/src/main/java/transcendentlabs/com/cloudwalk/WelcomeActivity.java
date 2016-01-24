@@ -7,6 +7,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -92,14 +93,16 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
 
         joinNetwork = (Button) findViewById(R.id.joinNetwork);
 
-        joinNetwork.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(
-                        WelcomeActivity.this,
-                        NetworkActivity.class);
-                intent.putExtra("request", true);
-                startActivity(intent);
+        joinNetwork.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View arg0) {
+                // Logout current user
+                if (!Settings.System.canWrite(WelcomeActivity.this)) {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                    startActivity(intent);
+                }
+                Hotspot.connect(WelcomeActivity.this);
+
             }
         });
 
@@ -107,12 +110,14 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
 
         broadcastNetwork.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(
-                        WelcomeActivity.this,
-                        NetworkActivity.class);
-                intent.putExtra("request", false);
-                startActivity(intent);
+            public void onClick(View arg0) {
+                // Logout current user
+                if (!Settings.System.canWrite(WelcomeActivity.this)) {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                    startActivity(intent);
+                }
+                Hotspot.configApState(WelcomeActivity.this);
+
             }
         });
 

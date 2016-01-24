@@ -250,7 +250,7 @@ public class NetworkActivity extends AppCompatActivity implements WifiP2pManager
                             Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                             startActivity(intent);
                         }
-                        Hotspot.configApState(context, true);
+                        Hotspot.configApState(context);
                     }
                 }
             }

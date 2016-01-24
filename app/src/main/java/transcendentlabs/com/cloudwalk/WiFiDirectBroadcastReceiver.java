@@ -47,7 +47,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                         mActivity.startActivity(intent1);
                     }
                     Log.d("BROADCAST", "OPENINGJAIS@@@@@DHAJSDLKAS");
-                    Hotspot.configApState(mActivity);
+                    //Hotspot.configApState(mActivity);
                 }
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
