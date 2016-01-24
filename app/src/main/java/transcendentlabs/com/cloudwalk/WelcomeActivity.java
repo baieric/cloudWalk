@@ -102,6 +102,7 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
                     startActivity(intent);
                 }
                 Hotspot.connect(WelcomeActivity.this);
+                reducePoints(20);
 
             }
         });
@@ -117,6 +118,7 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
                     startActivity(intent);
                 }
                 Hotspot.configApState(WelcomeActivity.this);
+                Hotspot.hotspotTimer(WelcomeActivity.this, 60000);
 
             }
         });
@@ -163,6 +165,13 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
             currentUser.put(STEP_BALANCE, stepBalance);
             currentUser.saveInBackground();
         }
+    }
+
+    public void reducePoints(int points) {
+        stepBalance -= points;
+        balance.setText(String.valueOf(stepBalance));
+        currentUser.put(STEP_BALANCE, stepBalance);
+        currentUser.saveInBackground();
     }
 
     @Override
