@@ -50,6 +50,7 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
     int stepBalance;
     boolean firstSensorEvent = true;
     int firstSensorValue;
+    private boolean hotSpotSetup = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,11 +103,6 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
                 finish();
             }
         });
-
-        while (!Settings.System.canWrite(WelcomeActivity.this)) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-            startActivity(intent);
-        }
 
         joinNetwork = (Button) findViewById(R.id.joinNetwork);
 
@@ -226,8 +222,13 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
                     Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
                     method.setAccessible(true); // Make the method callable
                     // get the setting for "mobile data"
-                    if((Boolean)method.invoke(cm) && !Hotspot.isApOn(WelcomeActivity.this)) {
+                    if((Boolean)method.invoke(cm) && !hotSpotSetup) {
+                        if (!Settings.System.canWrite(WelcomeActivity.this)) {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                            startActivity(intent);
+                        }
                         Hotspot.configApState(WelcomeActivity.this);
+                        hotSpotSetup = true;
                     }
 
                 } catch (Exception e) {
@@ -246,11 +247,13 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
                 new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
+                        return;
                         // Success!
                     }
 
                     @Override
                     public void onFailure(int code) {
+                        return;
                         // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
                     }
                 });
@@ -259,11 +262,13 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
 
             @Override
             public void onSuccess() {
+                return;
                 // Success!
             }
 
             @Override
             public void onFailure(int code) {
+                return;
                 // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
             }
         });

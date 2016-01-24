@@ -2,6 +2,8 @@ package transcendentlabs.com.cloudwalk;
 
 import android.content.*;
 import android.net.wifi.*;
+import android.util.Log;
+
 import java.lang.reflect.*;
 import java.util.List;
 
@@ -24,7 +26,8 @@ public class Hotspot {
 
     // toggle wifi hotspot on or off
     public static boolean configApState(Context context) {
-        WifiManager wifimanager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
+        Log.d("key", "Hotspot being created");
+        WifiManager wifimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiConfiguration wificonfiguration = null;
 
         try {
