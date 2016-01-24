@@ -1,6 +1,5 @@
 package transcendentlabs.com.cloudwalk;
 
-import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -11,10 +10,10 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.Window;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,6 +35,10 @@ public class NetworkActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_network);
+
+        ActionBar bar = getSupportActionBar();
+        Window window = getWindow();
+        Util.setActionBarColour(bar, window, this);
 
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);

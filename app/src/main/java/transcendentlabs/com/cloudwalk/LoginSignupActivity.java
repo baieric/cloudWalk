@@ -1,9 +1,11 @@
 package transcendentlabs.com.cloudwalk;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -13,7 +15,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-public class LoginSignupActivity extends Activity {
+public class LoginSignupActivity extends AppCompatActivity {
     // Declare Variables
     Button loginbutton;
     Button signup;
@@ -28,6 +30,11 @@ public class LoginSignupActivity extends Activity {
         // Get the view from main.xml
         setContentView(R.layout.activity_login_signup);
         // Locate EditTexts in main.xml
+
+        ActionBar bar = getSupportActionBar();
+        Window window = getWindow();
+        Util.setActionBarColour(bar, window, this);
+
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
 
