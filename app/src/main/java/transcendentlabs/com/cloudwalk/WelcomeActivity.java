@@ -25,6 +25,7 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
     // Declare Variable
     TextView logout;
     Button joinNetwork;
+    Button broadcastNetwork;
 
     private SensorManager sensorManager;
     private TextView count;
@@ -97,9 +98,24 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
                 Intent intent = new Intent(
                         WelcomeActivity.this,
                         NetworkActivity.class);
+                intent.putExtra("request", true);
                 startActivity(intent);
             }
         });
+
+        broadcastNetwork = (Button) findViewById(R.id.broadcastNetwork);
+
+        broadcastNetwork.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(
+                        WelcomeActivity.this,
+                        NetworkActivity.class);
+                intent.putExtra("request", false);
+                startActivity(intent);
+            }
+        });
+
         count = (TextView) findViewById(R.id.step_count);
         balance = (TextView) findViewById(R.id.step_balance);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);

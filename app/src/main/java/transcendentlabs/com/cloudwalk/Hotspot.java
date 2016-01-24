@@ -1,6 +1,8 @@
 package transcendentlabs.com.cloudwalk;
 
 import android.content.*;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.*;
 import android.os.Handler;
 
@@ -25,13 +27,13 @@ public class Hotspot {
     }
 
     // toggle wifi hotspot on or off
-    public static boolean configApState(Context context) {
+    public static boolean configApState(Context context, boolean on) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiConfiguration wificonfiguration = null;
 
         try {
             // if WiFi is on, turn it off
-            if(isApOn(context)) {
+            if (isApOn(context) && !on) {
                 wifimanager.setWifiEnabled(false);
             }
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
@@ -56,28 +58,35 @@ public class Hotspot {
     }
 
     public static boolean connect(Context context) {
-        String networkSSID = "test";
-        String networkPass = "testpassword";
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-        WifiConfiguration conf = new WifiConfiguration();
-        conf.SSID = "\"" + networkSSID + "\"";   // Please note the quotes. String should contain ssid in quotes
-        conf.preSharedKey = "\""+ networkPass +"\"";
+        if (mWifi.isConnected()) {
+            // Do whatever
+            String networkSSID = "test";
+            String networkPass = "testpassword";
 
-        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-        wifiManager.addNetwork(conf);
+            WifiConfiguration conf = new WifiConfiguration();
+            conf.SSID = "\"" + networkSSID + "\"";   // Please note the quotes. String should contain ssid in quotes
+            conf.preSharedKey = "\""+ networkPass +"\"";
 
-        List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
-        for( WifiConfiguration i : list ) {
-            if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
-                wifiManager.disconnect();
-                wifiManager.enableNetwork(i.networkId, true);
-                wifiManager.reconnect();
+            WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+            wifiManager.addNetwork(conf);
 
-                break;
+            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+            for( WifiConfiguration i : list ) {
+                if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+                    wifiManager.disconnect();
+                    wifiManager.enableNetwork(i.networkId, true);
+                    wifiManager.reconnect();
+
+                    break;
+                }
             }
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public static void hotspotTimer(final Context context, Integer time) {
@@ -85,7 +94,7 @@ public class Hotspot {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                configApState(context);
+                configApState(context, false);
             }
 
         }, time);

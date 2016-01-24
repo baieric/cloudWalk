@@ -93,6 +93,18 @@
             android:background="@drawable/network_button"
             android:textColor="@android:color/white"/>
 
+        <Button
+            android:id="@+id/broadcastNetwork"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Offer Hotspot"
+            android:drawableLeft="@drawable/ic_wifi_tethering_white_24dp"
+            android:background="@drawable/network_button"
+            android:textColor="@android:color/white"/>
+
         <TextView
             android:id="@+id/logout"
             android:layout_width="wrap_content"
