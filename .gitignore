@@ -9,4 +9,5 @@
 .DS_Store
 /app/app.iml
 /build
+cloudWalk.iml
 *.properties
