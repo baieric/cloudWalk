@@ -98,7 +98,6 @@ public class WelcomeActivity extends AppCompatActivity implements SensorEventLis
                         WelcomeActivity.this,
                         NetworkActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
         count = (TextView) findViewById(R.id.step_count);
