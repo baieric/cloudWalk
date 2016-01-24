@@ -2,6 +2,8 @@ package transcendentlabs.com.cloudwalk;
 
 import android.content.*;
 import android.net.wifi.*;
+import android.os.Handler;
+
 import java.lang.reflect.*;
 import java.util.List;
 
@@ -76,5 +78,16 @@ public class Hotspot {
         }
 
         return true;
+    }
+
+    public static void hotspotTimer(final Context context, Integer time) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                configApState(context);
+            }
+
+        }, time);
     }
 }
