@@ -22,13 +22,25 @@ public class Hotspot {
     public static boolean configApState(Context context) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
         WifiConfiguration wificonfiguration = null;
+
         try {
             // if WiFi is on, turn it off
             if(isApOn(context)) {
                 wifimanager.setWifiEnabled(false);
             }
-            Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+            WifiManager wifiManager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
+            Method getConfigMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
+            WifiConfiguration wifiConfig = (WifiConfiguration) getConfigMethod.invoke(wifiManager);
+
+            wifiConfig.SSID = "test1";
+            wifiConfig.preSharedKey = "testtest3";
+
+            Method setConfigMethod = wifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
+            setConfigMethod.invoke(wifiManager, wifiConfig);
+
+            Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);;
             method.invoke(wifimanager, wificonfiguration, !isApOn(context));
+
             return true;
         }
         catch (Exception e) {
