@@ -124,7 +124,7 @@ public class NetworkActivity extends AppCompatActivity{
                 if(instanceName.equals("CloudWalk")){
                     if(allConnections.containsKey(resourceType.deviceAddress)) {
                         Peer p = allConnections.get(resourceType.deviceAddress);
-                        if(p.needsConnection)
+                        if(!p.needsConnection)
                         peers.add(p);
                     } else{
                         // TODO handle this error case?
